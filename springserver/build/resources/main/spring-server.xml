@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <util:properties id="jdbcProps">
+        <prop key="teledon.jdbc.url">jdbc:sqlite:D:\\sem4\\mpp_2\\mpp_teledon\\mpp_teledon\\proiect.db</prop>
+    </util:properties>
+
+    <bean id="volValidator" class="ValidatorVoluntar"></bean>
+
+    <bean id="voluntarRepo" class="VoluntarDBRepository">
+    <constructor-arg ref ="jdbcProps"/>
+        <constructor-arg ref="volValidator"/>
+    </bean>
+
+    <bean id="donatorValidator" class="ValidatorDonator"></bean>
+    <bean id="donatorRepo" class="DonatorDBRepository">
+        <constructor-arg ref="jdbcProps"/>
+        <constructor-arg ref="donatorValidator"/>
+    </bean>
+
+    <bean id = "cazCaritabilRepo" class="CazCaritabilDBRepository">
+        <constructor-arg ref="jdbcProps"/>
+    </bean>
+
+    <bean id="donatieRepo" class="DonatieDBRepository">
+        <constructor-arg ref="jdbcProps"/>
+    </bean>
+
+
+    <bean id="teledonService" class="ServicesImplementation2">
+        <constructor-arg ref="voluntarRepo"/>
+        <constructor-arg ref="cazCaritabilRepo"/>
+        <constructor-arg ref="donatorRepo"/>
+        <constructor-arg ref="donatieRepo"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+
+        <property name="serviceName" value="Teledon"/>
+        <property name="service" ref="teledonService"/>
+        <property name="serviceInterface" value="IServices"/>
+        <property name="servicePort" value="1099"/>
+    </bean>
+
+
+
+</beans>
